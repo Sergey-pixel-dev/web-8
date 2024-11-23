@@ -50,7 +50,7 @@ func (h *Handlers) handler(w http.ResponseWriter, r *http.Request) {
 		count, err := h.dbProvider.GetCount()
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("ошибка в субд"))
+			w.Write([]byte("ошибка в субд: " + err.Error()))
 			return
 		}
 		h.dbProvider.UpdateCount(count + i)
@@ -59,7 +59,7 @@ func (h *Handlers) handler(w http.ResponseWriter, r *http.Request) {
 		count, err := h.dbProvider.GetCount()
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("ошибка в субд"))
+			w.Write([]byte("ошибка в субд: " + err.Error()))
 			return
 		}
 		w.WriteHeader(http.StatusOK)
@@ -71,7 +71,7 @@ func (h *Handlers) handler(w http.ResponseWriter, r *http.Request) {
 
 func (dp *DatabaseProvider) GetCount() (int, error) {
 	var msg string
-	row := dp.db.QueryRow("SELECT count FROM labs order by id desc LIMIT 1") //чтоб наверняка последнее взяли
+	row := dp.db.QueryRow("SELECT count FROM labs order by id LIMIT 1") //чтоб наверняка последнее взяли
 	err := row.Scan(&msg)
 	if err != nil {
 		return -1, err
